@@ -91,7 +91,7 @@ var user = [
     active: true
   }
 ];
-var inmueble = [
+var inmuebles = [
   {
     id: 0,
     name: "Apartamento",
@@ -184,8 +184,8 @@ app.get("/image", function(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.type("application/json");
   try {
-    var fin = _.findWhere(inmueble, { id: parseInt(req.query.id) });
-    res.status(200).send(fin); // responde array de datos de ese inmueble
+    var fin = _.findWhere(inmuebles, { id: parseInt(req.query.id) });
+    res.status(200).send(fin); // responde array de datos de ese inmuebles
   } catch (error) {
     res.status(200).send({ error: true, message: "Incoherencia en datos " });
   }
@@ -196,9 +196,9 @@ app.get("/inmuebles", function(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.type("application/json");
   try {
-    // var fin = _.findWhere(inmueble, { id: parseInt(req.query.id) });
-    // var fin = inmueble
-    res.status(200).send(inmueble); // responde array de datos de ese inmueble
+    // var fin = _.findWhere(inmuebles, { id: parseInt(req.query.id) });
+    // var fin = inmuebles
+    res.status(200).send(inmuebles); // responde array de datos de ese inmuebles
   } catch (error) {
     res.status(200).send({ error: true, message: "Incoherencia en datos " });
   }
@@ -282,6 +282,46 @@ app.get("/deleteuser", function(req, res) {
     user = finSinUsuario;
     console.log(user);
     res.status(200).send(fin); // responde array de todos los datos de ese usuario
+  } catch (error) {
+    res.status(200).send({ error: true, message: "Incoherencia en datos " });
+  }
+});
+
+// registra un usuario  http://192.168.16.106:8081/register?user=usuarioo&pass=clave&phone=mitlf
+app.get("/register", function(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.type("application/json");
+  try {
+    var persona = {
+      id: user.length,
+      user: req.query.user,
+      pass: req.query.pass,
+      rol: "I",
+      phone: req.query.phone,
+      active: true
+    };
+    console.log(JSON.stringify(persona))
+
+    myfilter = { user: req.query.user};
+    var fin = _.where(user, myfilter);
+
+    if (fin.length!==0) {
+      // no sepuede registrar, ya existe
+      console.log("registrado ya existe..");
+      res.status(200).send({ 'error': true, 'message': "ya existe el  usuario"}); // responde array de todos los datos de ese usuario
+      
+    } else {
+      // proceder a registrar
+      user.push(persona);
+      console.log(JSON.stringify(user))
+      console.log("registrado usuario nuevo..");
+      res.status(200).send({ 'error': false, 'message': "registrado nuevo usuario     ahora:"+user.length }); // responde array de todos los datos de ese usuario
+      
+
+    }
+
+ 
+ 
   } catch (error) {
     res.status(200).send({ error: true, message: "Incoherencia en datos " });
   }
